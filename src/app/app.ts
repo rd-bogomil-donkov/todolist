@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, model, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { MatInputModule } from '@angular/material/input';
 import { MatIcon } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioModule } from '@angular/material/radio';
 import { Input } from '@angular/core';
+import { Item } from './item.model';
 
 @Component({
   selector: 'app-root',
@@ -18,13 +19,36 @@ import { Input } from '@angular/core';
 })
 export class App {
   @Input() value: string = '';
-  readonly checked = model(false);
 
-  items: string[] = []
+  items: Item[] = []
+  checkedItems: Item[] = []
+  visibleItems: Item[] = []
 
-  addItem(){
-    if(!this.items.find(i=> i===this.value) && this.value.trim().length>0){
-      this.items.push(this.value)
+  onAddItem() {
+    if (!this.items.find(i => i.name === this.value) && this.value.trim().length > 0) {
+      this.items.push({ name: this.value, checked: false })
     }
+
+    this.visibleItems = this.items
+
+    this.value = '';
+  }
+
+  onInputChange(value: string) {
+    this.visibleItems = this.items.filter(i => i.name.toLowerCase().includes(value.toLowerCase()));
+  }
+
+  onCheckboxChange() {
+    this.checkedItems = this.items.filter(i => i.checked);
+  }
+
+  isAnyItemChecked() {
+    return this.checkedItems.length > 0;
+  }
+
+  onDelete() {
+    this.items = this.items.filter(i => !i.checked);
+    this.visibleItems = this.items;
+    this.checkedItems = [];
   }
 }

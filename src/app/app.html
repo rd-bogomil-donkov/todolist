@@ -1,42 +1,52 @@
 <div class="controls">
 
-<mat-form-field class="input-field">
-  <mat-label>Search</mat-label>
-  <input matInput type="text" [(ngModel)]="value">
-  @if (value) {
+  <mat-form-field class="input-field">
+    <mat-label>Search</mat-label>
+    <input matInput type="text" [(ngModel)]="value" (keyup)="onInputChange(value)" >
+    @if (value) {
     <button matSuffix matIconButton aria-label="Clear" (click)="value=''">
       <mat-icon>close</mat-icon>
     </button>
-  }
-</mat-form-field>
+    }
+  </mat-form-field>
 
-<section>
-  <div class="button-row">
-    <button matButton (click)="addItem()" >Add</button>
-  </div>
-</section>
+  <section>
+    <div class="button-row">
+      @if(value.trim().length > 0) {
+      <button matButton (click)="onAddItem()">Add</button>
+      }@else {
+      <button matButton disabled>Add</button>
+      }
+    </div>
+  </section>
 
-<section>
-  <div class="button-row">
-    <button matButton>Delete</button>
-  </div>
-</section>
+  <section>
+    <div class="button-row">
+      @if(isAnyItemChecked()) {
+      <button matButton (click)="onDelete()">Delete</button>
+      }@else {
+      <button matButton disabled>Delete</button>
+      }
+
+    </div>
+  </section>
 
 </div>
 
 <mat-list role="list">
-  @for(item of items; track item){
+  @for(item of visibleItems; track item){
 
-    <mat-card>
+  <mat-card>
     <mat-card-content>
       <section class="checkbox-section">
 
-      <mat-list-item role="listitem"><mat-checkbox class="checkbox-margin" [(ngModel)]="checked">{{item}}</mat-checkbox></mat-list-item>    
-      
+        <mat-list-item role="list-item"><mat-checkbox class="checkbox-margin" [(ngModel)]="item.checked"
+            (change)="onCheckboxChange()">{{item.name}}</mat-checkbox></mat-list-item>
+
       </section>
     </mat-card-content>
-    </mat-card>
+  </mat-card>
 
-    
+
   }
 </mat-list>
